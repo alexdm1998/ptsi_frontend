@@ -1,9 +1,13 @@
 <nav>
+  
   <div>
-    <select class="select-sidebar" (change)="selectChangeHandler($event)">
-      <option value="null" selected>Select a dataflow</option>
-      <option *ngFor="let datastructure of datastructures"  value="{{datastructure[0]}}" [attr.agency_id]="datastructure[2]">{{datastructure[0]}}</option>
-    </select>
+    <mat-form-field appearance="fill">
+      <mat-label>Select a dataflow</mat-label>
+      <mat-select class="select-sidebar" (selectionChange)="selectChangeHandler($event)">
+        <mat-option value="null" selected>Select a dataflow</mat-option>
+        <mat-option *ngFor="let datastructure of datastructures"  value="{{datastructure[0]}}" [attr.agency_id]="datastructure[2]">{{datastructure[0]}}</mat-option>
+      </mat-select>
+    </mat-form-field>
   </div>
   
 
