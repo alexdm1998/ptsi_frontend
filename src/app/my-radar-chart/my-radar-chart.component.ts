@@ -125,26 +125,59 @@ export class MyRadarChartComponent implements OnInit {
       if(this.chart !== undefined){
         this.chart.destroy();
       }
-      console.log(this.chart);
+      //console.log(this.chart);
         this.chart = new Chart('canvas', {
           type: 'radar',
           data: {
             labels: uniqueVarX, 
             datasets: FinalArray,
-            backgroundColor: 'rgba(255, 99, 132, 0.2)'
+            fill: true
           },
           options: {
+            defaultColor: 'rgb(54, 162, 235)',
+            defaultFontColor: 187235,
+            fillStyle: "rgba(54, 162, 235, 0.1)",
+            shadowColor: "rgba(54, 162, 235, 0.2)",
+            strokeStyle: "rgba(54, 162, 235, 0.3)",
             legend: {
-              display: true
+              display: true,
             },
             elements: {
+              arc: {
+                backgroundColor: "rgba(54, 162, 235, 0.1)",
+  	            borderColor: "#985",
+                borderWidth: 2
+              },
               line: {
+                backgroundColor: "rgba(54, 162, 235, 0.1)",
+                borderCapStyle: "butt",
+                borderColor: "rgba(54, 162, 235, 0.2)",
                 borderWidth: 3
+              },
+              point: {
+                backgroundColor: "rgba(54, 162, 235, 1)",
+                borderColor: "rgba(54, 162, 235, 1)",
+                borderWidth: 1,
+                hitRadius: 1,
+                hoverBorderWidth: 1,
+                hoverRadius: 4,
+                pointStyle: "circle",
+                radius: 3
+              }
+            },
+            scale:{
+              angleLines:{
+                color: "rgba(50, 160, 235, 0.1)",
+                display: true,
+                lineWidth: 1
+              },
+              gridLines:{
+                color: "rgba(100, 50, 96, 0.1)"
               }
             }
-          }
+          },
         })
-
+        console.log(this.chart);
     }
   }
 
