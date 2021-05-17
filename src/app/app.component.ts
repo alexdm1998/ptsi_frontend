@@ -7,4 +7,13 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'ngchart';
+  
+  constructor(){
+  }
+  Show_Bool = true;
+  ToggleShow(){
+    console.log(this.Show_Bool);
+    this.Show_Bool = !this.Show_Bool;
+  }
+
 }
