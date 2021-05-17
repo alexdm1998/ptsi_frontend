@@ -87,7 +87,7 @@ export class MyBarChartComponent implements OnInit, OnDestroy{
     }
   }
 
-  ChangeOnExpand(){
+  async ChangeOnExpand(){
     let SelectedExpand = {};
     this.chartRender = true; //Presets the boolean for true, if fails test doesnt render
     for(let dim in this.ExpandFormGroup.controls){
@@ -118,13 +118,21 @@ export class MyBarChartComponent implements OnInit, OnDestroy{
       let FinalArray = [];
       for(let Obs in OBS_VALUE){
         let templateDataset = {};
+        let RandomColor = await this.RandomColor(0,255);
         for(let Var_X in uniqueVarX){
           if(templateDataset['label'] == undefined){templateDataset['label'] = OBS_VALUE[Obs][2]}
           if(templateDataset['data'] == undefined){templateDataset['data'] = []}
+          if(templateDataset['backgroundColor'] == undefined){templateDataset['backgroundColor'] = []}
+          if(templateDataset['borderColor'] == undefined){templateDataset['borderColor'] = []}
+          if(templateDataset['borderWidth'] == undefined){templateDataset['borderWidth'] = 0.2}
           if(OBS_VALUE[Obs][0] == uniqueVarX[Var_X]){
             templateDataset['data'].push(OBS_VALUE[Obs][1])
+            templateDataset['backgroundColor'].push(`rgba(${RandomColor[0]}, ${RandomColor[1]}, ${RandomColor[2]}, 0.5)`);
+            templateDataset['borderColor'].push(`rgb(${RandomColor[0]}, ${RandomColor[1]}, ${RandomColor[2]})`);
           }else{
             templateDataset['data'].push([]);
+            templateDataset['backgroundColor'].push(`rgba(${RandomColor[0]}, ${RandomColor[1]}, ${RandomColor[2]}, 0.5)`);
+            templateDataset['borderColor'].push(`rgb(${RandomColor[0]}, ${RandomColor[1]}, ${RandomColor[2]})`);
           }
         }
         FinalArray.push(templateDataset);
@@ -165,6 +173,18 @@ export class MyBarChartComponent implements OnInit, OnDestroy{
   }
 
 
+  RandomColor(Min_Range:number,Max_Range:number){
+    return new Promise(resolve=>{
+      var OutputArray = [];
+      for(let i = 0; i < 3; i++){ //Number 3 for rgb(255,255,255) and rgba(255,255,255,0-1);
+        let randomVal = (Math.random() * (Max_Range - Min_Range)) + Min_Range;
+        let randomValRounded = Math.round(randomVal);
+        OutputArray.push(randomValRounded);
+      }
+      console.log(OutputArray)
+      resolve(OutputArray);
+    })
+  }
 
   ngOnInit() {
     this.SelectFormGroup = new FormGroup({})
