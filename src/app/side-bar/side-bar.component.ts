@@ -20,7 +20,6 @@ export class SideBarComponent implements OnInit {
 
 
   selectChangeHandler(event: any){
-    console.log("Event triggered")
     let datastructure_id = event.value;
     let datastructure_agency_element = event.source.options._results;
     let datastructure_agency;

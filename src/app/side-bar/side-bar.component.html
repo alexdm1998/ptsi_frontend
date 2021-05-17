@@ -1,8 +1,8 @@
 <nav>
   
-  <div>
-    <mat-form-field appearance="fill">
-      <mat-label>Select a dataflow</mat-label>
+  <div class="datastructure-nav">
+    <mat-form-field appearance="fill" class="Form_Sidebar">
+      <mat-label class="select-sidebar-text-white">Select a dataflow</mat-label>
       <mat-select class="select-sidebar" (selectionChange)="selectChangeHandler($event)">
         <mat-option value="null" selected>Select a dataflow</mat-option>
         <mat-option *ngFor="let datastructure of datastructures"  value="{{datastructure[0]}}" [attr.agency_id]="datastructure[2]">{{datastructure[0]}}</mat-option>
