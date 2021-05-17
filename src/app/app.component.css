@@ -2,9 +2,23 @@
     float:left;
     width:15%;
     padding: 0.5%;
+    min-height: 1000px;
+    background-color: rgb(37, 37, 37);
 }
 
 .container{
     float:right;
+}
+
+.nav-link{
+    color: rgba(255, 255, 255, 0.782);
+}
+
+.hide-button{
+    background-color: inherit;
+    color: rgba(255, 255, 255, 0.782);
+    position: absolute;
+    right:1%;
+    top:0.5%
 }
 

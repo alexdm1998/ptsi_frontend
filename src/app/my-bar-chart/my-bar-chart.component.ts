@@ -1,14 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { GraphDataService } from '../graph-data.service';
 import { Chart } from 'chart.js';
 import {FormControl, FormGroup} from '@angular/forms';
+import {ShowHideService} from '../show-hide.service'
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-my-bar-chart',
   templateUrl: './my-bar-chart.component.html',
   styleUrls: ['./my-bar-chart.component.css']
 })
-export class MyBarChartComponent implements OnInit {
+export class MyBarChartComponent implements OnInit, OnDestroy{
 
   //(Input) Dataflow that is holding all data
   public Dataflow;
@@ -24,7 +26,18 @@ export class MyBarChartComponent implements OnInit {
   ExpandSelectList;
   ExpandSelect = false;
 
-  constructor(private _graph_data:GraphDataService) {
+  //ShowHide service variable holder
+  ShowHide:boolean = true;
+  ShowHide_Sub:Subscription;
+
+  constructor(private _graph_data:GraphDataService, private _showhide_service:ShowHideService) {
+
+    this.ShowHide_Sub = this._showhide_service.messageChanges$.subscribe((msg:boolean)=>{
+      this.ShowHide = msg;
+      console.log("MY BAR CHART")
+      console.log(this.ShowHide);
+    })
+
     this._graph_data.messageChanges$.subscribe((msg: object)=>{
       this.SelectFormGroup.reset();
       this.Dataflow = msg['data'];
@@ -157,5 +170,9 @@ export class MyBarChartComponent implements OnInit {
     this.SelectFormGroup = new FormGroup({})
     this.SelectFormGroup.addControl("Axis X", new FormControl({}))
     this.SelectFormGroup.addControl("Axis Y", new FormControl({}))
+  }
+
+  ngOnDestroy(){
+    this.ShowHide_Sub.unsubscribe();
   }
 }
