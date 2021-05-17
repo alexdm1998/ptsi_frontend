@@ -2,7 +2,7 @@
   <div style="display: block">
     <canvas id="canvas">{{ chart }}</canvas>
   </div>
-  <div class="Relative_Select">
+  <div *ngIf="ShowHide" class="Relative_Select">
     <form [formGroup]="SelectFormGroup">
       <mat-form-field appearance="fill" class="Form_Chart">
         <mat-label class="select-white-text">Var X</mat-label>
