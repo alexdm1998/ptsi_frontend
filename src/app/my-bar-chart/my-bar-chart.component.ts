@@ -1,14 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { GraphDataService } from '../graph-data.service';
 import { Chart } from 'chart.js';
 import {FormControl, FormGroup} from '@angular/forms';
+import {ShowHideService} from '../show-hide.service'
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-my-bar-chart',
   templateUrl: './my-bar-chart.component.html',
   styleUrls: ['./my-bar-chart.component.css']
 })
-export class MyBarChartComponent implements OnInit {
+export class MyBarChartComponent implements OnInit, OnDestroy{
 
   //(Input) Dataflow that is holding all data
   public Dataflow;
@@ -24,7 +26,18 @@ export class MyBarChartComponent implements OnInit {
   ExpandSelectList;
   ExpandSelect = false;
 
-  constructor(private _graph_data:GraphDataService) {
+  //ShowHide service variable holder
+  ShowHide:boolean = true;
+  ShowHide_Sub:Subscription;
+
+  constructor(private _graph_data:GraphDataService, private _showhide_service:ShowHideService) {
+
+    this.ShowHide_Sub = this._showhide_service.messageChanges$.subscribe((msg:boolean)=>{
+      this.ShowHide = msg;
+      console.log("MY BAR CHART")
+      console.log(this.ShowHide);
+    })
+
     this._graph_data.messageChanges$.subscribe((msg: object)=>{
       this.SelectFormGroup.reset();
       this.Dataflow = msg['data'];
@@ -74,7 +87,7 @@ export class MyBarChartComponent implements OnInit {
     }
   }
 
-  ChangeOnExpand(){
+  async ChangeOnExpand(){
     let SelectedExpand = {};
     this.chartRender = true; //Presets the boolean for true, if fails test doesnt render
     for(let dim in this.ExpandFormGroup.controls){
@@ -105,13 +118,21 @@ export class MyBarChartComponent implements OnInit {
       let FinalArray = [];
       for(let Obs in OBS_VALUE){
         let templateDataset = {};
+        let RandomColor = await this.RandomColor(0,255);
         for(let Var_X in uniqueVarX){
           if(templateDataset['label'] == undefined){templateDataset['label'] = OBS_VALUE[Obs][2]}
           if(templateDataset['data'] == undefined){templateDataset['data'] = []}
+          if(templateDataset['backgroundColor'] == undefined){templateDataset['backgroundColor'] = []}
+          if(templateDataset['borderColor'] == undefined){templateDataset['borderColor'] = []}
+          if(templateDataset['borderWidth'] == undefined){templateDataset['borderWidth'] = 0.2}
           if(OBS_VALUE[Obs][0] == uniqueVarX[Var_X]){
             templateDataset['data'].push(OBS_VALUE[Obs][1])
+            templateDataset['backgroundColor'].push(`rgba(${RandomColor[0]}, ${RandomColor[1]}, ${RandomColor[2]}, 0.5)`);
+            templateDataset['borderColor'].push(`rgb(${RandomColor[0]}, ${RandomColor[1]}, ${RandomColor[2]})`);
           }else{
             templateDataset['data'].push([]);
+            templateDataset['backgroundColor'].push(`rgba(${RandomColor[0]}, ${RandomColor[1]}, ${RandomColor[2]}, 0.5)`);
+            templateDataset['borderColor'].push(`rgb(${RandomColor[0]}, ${RandomColor[1]}, ${RandomColor[2]})`);
           }
         }
         FinalArray.push(templateDataset);
@@ -152,10 +173,26 @@ export class MyBarChartComponent implements OnInit {
   }
 
 
+  RandomColor(Min_Range:number,Max_Range:number){
+    return new Promise(resolve=>{
+      var OutputArray = [];
+      for(let i = 0; i < 3; i++){ //Number 3 for rgb(255,255,255) and rgba(255,255,255,0-1);
+        let randomVal = (Math.random() * (Max_Range - Min_Range)) + Min_Range;
+        let randomValRounded = Math.round(randomVal);
+        OutputArray.push(randomValRounded);
+      }
+      console.log(OutputArray)
+      resolve(OutputArray);
+    })
+  }
 
   ngOnInit() {
     this.SelectFormGroup = new FormGroup({})
     this.SelectFormGroup.addControl("Axis X", new FormControl({}))
     this.SelectFormGroup.addControl("Axis Y", new FormControl({}))
+  }
+
+  ngOnDestroy(){
+    this.ShowHide_Sub.unsubscribe();
   }
 }

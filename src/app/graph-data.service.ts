@@ -32,7 +32,6 @@ export class GraphDataService {
   getSharedDimensions(){
     let newArray = []
     for(let dim of this.Dimensions){
-      console.log(dim);
       newArray.push(dim)
     }
     return newArray;

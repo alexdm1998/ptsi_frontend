@@ -12,8 +12,7 @@ export class SideBarComponent implements OnInit {
 
   public datastructures;
   public changed = false;
-
-;
+  
   public DS = {};
 
 
@@ -21,8 +20,14 @@ export class SideBarComponent implements OnInit {
 
 
   selectChangeHandler(event: any){
-    let datastructure_id = event.target.value;
-    let datastructure_agency = event.target.options[event.target.options.selectedIndex].getAttribute('agency_id');
+    let datastructure_id = event.value;
+    let datastructure_agency_element = event.source.options._results;
+    let datastructure_agency;
+    for(let option of datastructure_agency_element){
+      if(option["selected"] == true){
+        datastructure_agency = option._element.nativeElement.getAttribute('agency_id');
+      }
+    }
     if(datastructure_id !== "null"){this.changed = true;}
     if(datastructure_id == "null"){this.changed = false;}
     this.DS = {
