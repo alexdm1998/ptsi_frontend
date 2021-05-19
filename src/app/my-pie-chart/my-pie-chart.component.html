@@ -1,6 +1,37 @@
-<div style="display: block">
-  <canvas baseChart
-          [data]="pieChartData"
-          [labels]="pieChartLabels"
-          [chartType]="pieChartType"></canvas>
+<div class="chart_container">
+  <div style="display: block">
+    <canvas id="canvas">{{ chart }}</canvas>
+  </div>
+  <div class="Relative_Select">
+    <form [formGroup]="SelectFormGroup">
+      <mat-form-field appearance="fill">
+        <mat-label>Var X</mat-label>
+        <mat-select (ngModelChange)="ChangeOnModel()" formControlName="Axis X">
+          <mat-option *ngFor="let dimension of Dimensions"  [value]="dimension.id">
+            {{dimension.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Label</mat-label>
+        <mat-select (ngModelChange)="ChangeOnModel()" formControlName="Axis Y">
+          <mat-option *ngFor="let dimension of Dimensions" [value]="dimension.id">
+            {{dimension.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </form>
+      <form [formGroup]="ExpandFormGroup" *ngIf='ExpandSelect'>
+        <mat-form-field appearance="fill" *ngFor="let dim of ExpandSelectList">
+          <mat-label>{{dim['DimID']}}</mat-label>
+          <mat-select (ngModelChange)="ChangeOnExpand()"formControlName="{{dim['DimID']}}">
+            <mat-option *ngFor="let option of dim['DimOptions']" [value]="option">
+              {{option}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </form>
+      
+  </div>
+  
 </div>

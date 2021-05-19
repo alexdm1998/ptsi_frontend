@@ -1,0 +1,38 @@
+.Relative_Select{
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.chart_container{
+    position: relative;
+}
+
+
+mat-form-field.mat-form-field {
+    font-size: 10px;
+}
+
+.Form_Chart{
+    background-color: rgba(74, 74, 74, 0.245);
+}
+
+::ng-deep .mat-select-value-text{
+    color: #d0cbcb;
+}
+
+::ng-deep .mat-form-field-underline{
+    display: none;
+}
+
+
+.select-white-text{
+    width: 100%;
+    color: #d0cbcb;
+}
+
+.Form_Expand{
+    position: absolute;
+    right: 0;
+    background-color: rgba(74, 74, 74, 0.245);
+}
