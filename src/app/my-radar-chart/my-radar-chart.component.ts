@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { GraphDataService } from '../graph-data.service';
 import { Chart } from 'chart.js';
 import {FormControl, FormGroup} from '@angular/forms';
+import {ShowHideService} from '../show-hide.service'
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-my-radar-chart',
@@ -24,7 +26,19 @@ export class MyRadarChartComponent implements OnInit {
     ExpandSelectList;
     ExpandSelect = false;
 
-  constructor(private _graph_data:GraphDataService) { 
+    //ShowHide service variable holder
+    ShowHide:boolean = true;
+    ShowHide_Sub:Subscription;
+
+    //'backgroundColor: ' + `rgba(${RandomColor[0]}, ${RandomColor[1]}, ${RandomColor[2]}, 0.5)`, 'borderColor: ' + `rgba(${RandomColor[0]}, ${RandomColor[1]}, ${RandomColor[2]}, 0.5)`
+  constructor(private _graph_data:GraphDataService, private _showhide_service:ShowHideService) { 
+    
+    this.ShowHide_Sub = this._showhide_service.messageChanges$.subscribe((msg:boolean)=>{
+      this.ShowHide = msg;
+      console.log("MY BAR CHART")
+      console.log(this.ShowHide);
+    })
+    
     this._graph_data.messageChanges$.subscribe((msg: object)=>{
       this.SelectFormGroup.reset();
       this.Dataflow = msg['data'];
@@ -73,7 +87,7 @@ export class MyRadarChartComponent implements OnInit {
     }
   }
 
-  ChangeOnExpand(){
+  async ChangeOnExpand(){
     let SelectedExpand = {};
     this.chartRender = true; //Presets the boolean for true, if fails test doesnt render
     for(let dim in this.ExpandFormGroup.controls){
@@ -95,8 +109,8 @@ export class MyRadarChartComponent implements OnInit {
         }
         return BoolResult;
       })
-      let NameX = this.SelectFormGroup.controls['Axis X'].value;
-      let NameLabel = this.SelectFormGroup.controls['Axis Y'].value;
+      let NameX = this.SelectFormGroup.controls['Axis X'].value; //Var X
+      let NameLabel = this.SelectFormGroup.controls['Axis Y'].value; //Label
       let VarX = newDataset.map(inst => inst[NameX]);
       let uniqueVarX = VarX.filter((c, index) => {return VarX.indexOf(c) === index;});
       uniqueVarX.sort();
@@ -104,13 +118,38 @@ export class MyRadarChartComponent implements OnInit {
       let FinalArray = [];
       for(let Obs in OBS_VALUE){
         let templateDataset = {};
+        let RandomColor = await this.RandomColor(0,255);
         for(let Var_X in uniqueVarX){
           if(templateDataset['label'] == undefined){templateDataset['label'] = OBS_VALUE[Obs][2]}
           if(templateDataset['data'] == undefined){templateDataset['data'] = []}
+          if(templateDataset['backgroundColor'] == undefined){templateDataset['backgroundColor'] = []}
+          if(templateDataset['borderColor'] == undefined){templateDataset['borderColor'] = []}
+          if(templateDataset['borderWidth'] == undefined){templateDataset['borderWidth'] = 0.2}
+          if(templateDataset['pointBackgroundColor'] == undefined){templateDataset['pointBackgroundColor'] = []}
+          if(templateDataset['pointBorderColor'] == undefined){templateDataset['pointBorderColor'] = []}
+          if(templateDataset['pointHoverBackgroundColor'] == undefined){templateDataset['pointHoverBackgroundColor'] = []}
+          if(templateDataset['pointHoverBorderColor'] == undefined){templateDataset['pointHoverBorderColor'] = []}
+          if(templateDataset['pointBorderWidth'] == undefined){templateDataset['pointBorderWidth'] = []}
+
           if(OBS_VALUE[Obs][0] == uniqueVarX[Var_X]){
             templateDataset['data'].push(OBS_VALUE[Obs][1])
+            templateDataset['backgroundColor'].push(`rgba(${RandomColor[0]}, ${RandomColor[1]}, ${RandomColor[2]}, 0.5)`);
+            templateDataset['borderColor'].push(`rgb(${RandomColor[0]}, ${RandomColor[1]}, ${RandomColor[2]})`);
+            templateDataset['pointBackgroundColor'].push(`rgba(${RandomColor[0]}, ${RandomColor[1]}, ${RandomColor[2]}, 0.5)`);
+            templateDataset['pointBorderColor'].push(`#fff`);
+            templateDataset['pointHoverBackgroundColor'].push(`#fff`);
+            templateDataset['pointHoverBorderColor'].push(`rgba(${RandomColor[0]}, ${RandomColor[1]}, ${RandomColor[2]}, 0.5)`);
+            templateDataset['pointBorderWidth'].push(`0.2`);
+
           }else{
             templateDataset['data'].push([]);
+            templateDataset['backgroundColor'].push(`rgba(${RandomColor[0]}, ${RandomColor[1]}, ${RandomColor[2]}, 0.5)`);
+            templateDataset['borderColor'].push(`rgb(${RandomColor[0]}, ${RandomColor[1]}, ${RandomColor[2]})`);
+            templateDataset['pointBackgroundColor'].push(`rgba(${RandomColor[0]}, ${RandomColor[1]}, ${RandomColor[2]}, 0.5)`);
+            templateDataset['pointBorderColor'].push(`#fff`);
+            templateDataset['pointHoverBackgroundColor'].push(`#fff`);
+            templateDataset['pointHoverBorderColor'].push(`rgba(${RandomColor[0]}, ${RandomColor[1]}, ${RandomColor[2]}, 0.5)`);
+            templateDataset['pointBorderWidth'].push(`0.2`);
           }
         }
         FinalArray.push(templateDataset);
@@ -125,60 +164,36 @@ export class MyRadarChartComponent implements OnInit {
       if(this.chart !== undefined){
         this.chart.destroy();
       }
-      //console.log(this.chart);
+      console.log(this.chart);
         this.chart = new Chart('canvas', {
           type: 'radar',
           data: {
-            labels: uniqueVarX, 
-            datasets: FinalArray,
-            fill: true
+            labels: uniqueVarX,
+            datasets: FinalArray
           },
           options: {
-            defaultColor: 'rgb(54, 162, 235)',
-            defaultFontColor: 187235,
-            fillStyle: "rgba(54, 162, 235, 0.1)",
-            shadowColor: "rgba(54, 162, 235, 0.2)",
-            strokeStyle: "rgba(54, 162, 235, 0.3)",
-            legend: {
-              display: true,
-            },
             elements: {
-              arc: {
-                backgroundColor: "rgba(54, 162, 235, 0.1)",
-  	            borderColor: "#985",
-                borderWidth: 2
-              },
               line: {
-                backgroundColor: "rgba(54, 162, 235, 0.1)",
-                borderCapStyle: "butt",
-                borderColor: "rgba(54, 162, 235, 0.2)",
                 borderWidth: 3
-              },
-              point: {
-                backgroundColor: "rgba(54, 162, 235, 1)",
-                borderColor: "rgba(54, 162, 235, 1)",
-                borderWidth: 1,
-                hitRadius: 1,
-                hoverBorderWidth: 1,
-                hoverRadius: 4,
-                pointStyle: "circle",
-                radius: 3
-              }
-            },
-            scale:{
-              angleLines:{
-                color: "rgba(50, 160, 235, 0.1)",
-                display: true,
-                lineWidth: 1
-              },
-              gridLines:{
-                color: "rgba(100, 50, 96, 0.1)"
               }
             }
-          },
+          }
         })
         console.log(this.chart);
     }
+  }
+
+  RandomColor(Min_Range:number,Max_Range:number){
+    return new Promise(resolve=>{
+      var OutputArray = [];
+      for(let i = 0; i < 3; i++){ //Number 3 for rgb(255,255,255) and rgba(255,255,255,0-1);
+        let randomVal = (Math.random() * (Max_Range - Min_Range)) + Min_Range;
+        let randomValRounded = Math.round(randomVal);
+        OutputArray.push(randomValRounded);
+      }
+      console.log(OutputArray)
+      resolve(OutputArray);
+    })
   }
 
   ngOnInit() {
