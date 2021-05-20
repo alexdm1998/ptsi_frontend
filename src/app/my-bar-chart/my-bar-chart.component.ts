@@ -34,8 +34,6 @@ export class MyBarChartComponent implements OnInit, OnDestroy{
 
     this.ShowHide_Sub = this._showhide_service.messageChanges$.subscribe((msg:boolean)=>{
       this.ShowHide = msg;
-      console.log("MY BAR CHART")
-      console.log(this.ShowHide);
     })
 
     this._graph_data.messageChanges$.subscribe((msg: object)=>{
@@ -45,7 +43,6 @@ export class MyBarChartComponent implements OnInit, OnDestroy{
       this.ExpandSelect = false; //Resetting values
       this.chartRender = false; //Resetting values
       this.Dimensions = this._graph_data.getSharedDimensions();
-      console.log(this.Dataflow);
       this.Dimensions.push({id: 'TIME_PERIOD', name: 'Time Period'})
       this.InitDataflow()
     })
@@ -59,14 +56,12 @@ export class MyBarChartComponent implements OnInit, OnDestroy{
   }
 
   ChangeOnModel(){
-    console.log(this.SelectFormGroup.value)
     let Form_X = this.SelectFormGroup.value['Axis X'];
     let Form_Y = this.SelectFormGroup.value['Label'];
     this.ExpandSelectList=[]; //Resetting values
     this.chartRender = false; //Resetting values
     if(!(Form_X == null || Object.keys(Form_X).length == 0) && !(Form_Y == null || Object.keys(Form_Y).length == 0)){ 
       this.ExpandFormGroup = new FormGroup({});
-      console.log(this.Dimensions);
       for(let Dim of this.Dimensions){
 
         if(!(Dim['id'] == Form_X || Dim['id'] == Form_Y || Dim['id'] == 'OBS_VALUE')){
@@ -79,8 +74,7 @@ export class MyBarChartComponent implements OnInit, OnDestroy{
         }
         
       }
-      console.log(this.ExpandFormGroup.controls);
-      console.log(this.ExpandSelectList);
+
       this.ExpandSelect = true;
     }else{
       this.ExpandSelect = false;
@@ -97,8 +91,7 @@ export class MyBarChartComponent implements OnInit, OnDestroy{
         this.chartRender = false
       }
     }
-    console.log("Chart render")
-    console.log(this.chartRender);
+
     if(this.chartRender){
       let newDataset = this.Dataflow.filter(elem => {
         let BoolResult = true;
@@ -123,15 +116,12 @@ export class MyBarChartComponent implements OnInit, OnDestroy{
 
       for(let LabelInst of uniqueVarLabel){
         let Instance_OBS = OBS_VALUE.filter(data => {return LabelInst == data[2]}) //data[2] is newDataset[NameLabel]
-        console.log(Instance_OBS);
         let RandomColor = await this.RandomColor(0,255);
         let templateDataset = {};
         for(let ValX of uniqueVarX){
           if(templateDataset['label'] == undefined){templateDataset['label'] = Instance_OBS[0][2]} //Defines structure
           if(templateDataset['data'] == undefined){templateDataset['data'] = []}
           if(templateDataset['backgroundColor'] == undefined){templateDataset['backgroundColor'] = `rgba(${RandomColor[0]}, ${RandomColor[1]}, ${RandomColor[2]}, 0.5)`}
-          if(templateDataset['borderColor'] == undefined){templateDataset['borderColor'] = `rgb(${RandomColor[0]}, ${RandomColor[1]}, ${RandomColor[2]})`}
-          if(templateDataset['pointBackgroundColor'] == undefined){templateDataset['pointBackgroundColor'] = `rgb(${RandomColor[0]}, ${RandomColor[1]}, ${RandomColor[2]})`}
           let MatchedValue = Instance_OBS.filter(data => {return ValX == data[0]})
           if(MatchedValue.length > 0){
             templateDataset['data'].push(MatchedValue[0][1]);
@@ -141,17 +131,11 @@ export class MyBarChartComponent implements OnInit, OnDestroy{
         }
         FinalArray.push(templateDataset);
       }
-      console.log("UniqueVarX")
-      console.log(uniqueVarX);
-      console.log("OBS_VALUE");
-      console.log(OBS_VALUE);
-      console.log("Final Array");
-      console.log(FinalArray);
+
       
       if(this.chart !== undefined){
         this.chart.destroy();
       }
-      console.log(this.chart);
         this.chart = new Chart('canvas', {
           type: 'bar',
           data: {
@@ -185,7 +169,6 @@ export class MyBarChartComponent implements OnInit, OnDestroy{
         let randomValRounded = Math.round(randomVal);
         OutputArray.push(randomValRounded);
       }
-      console.log(OutputArray)
       resolve(OutputArray);
     })
   }
