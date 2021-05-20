@@ -14,7 +14,7 @@
       </mat-form-field>
       <mat-form-field appearance="fill" class="Form_Chart">
         <mat-label class="select-white-text">Label</mat-label>
-        <mat-select class="select-white-text" (ngModelChange)="ChangeOnModel()" formControlName="Axis Y">
+        <mat-select class="select-white-text" (ngModelChange)="ChangeOnModel()" formControlName="Label">
           <mat-option *ngFor="let dimension of Dimensions" [value]="dimension.id">
             {{dimension.name}}
           </mat-option>

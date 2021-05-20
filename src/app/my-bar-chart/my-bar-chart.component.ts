@@ -61,7 +61,7 @@ export class MyBarChartComponent implements OnInit, OnDestroy{
   ChangeOnModel(){
     console.log(this.SelectFormGroup.value)
     let Form_X = this.SelectFormGroup.value['Axis X'];
-    let Form_Y = this.SelectFormGroup.value['Axis Y'];
+    let Form_Y = this.SelectFormGroup.value['Label'];
     this.ExpandSelectList=[]; //Resetting values
     this.chartRender = false; //Resetting values
     if(!(Form_X == null || Object.keys(Form_X).length == 0) && !(Form_Y == null || Object.keys(Form_Y).length == 0)){ 
@@ -109,30 +109,34 @@ export class MyBarChartComponent implements OnInit, OnDestroy{
         }
         return BoolResult;
       })
-      let NameX = this.SelectFormGroup.controls['Axis X'].value;
-      let NameLabel = this.SelectFormGroup.controls['Axis Y'].value;
+      let NameX = this.SelectFormGroup.controls['Axis X'].value; //Var X
+      let NameLabel = this.SelectFormGroup.controls['Label'].value; //Label
       let VarX = newDataset.map(inst => inst[NameX]);
+      let VarLabel = newDataset.map(data => data[NameLabel]);     
+      
       let uniqueVarX = VarX.filter((c, index) => {return VarX.indexOf(c) === index;});
+      let uniqueVarLabel = VarLabel.filter((c,index) => {return VarLabel.indexOf(c) === index});
       uniqueVarX.sort();
+
       let OBS_VALUE = newDataset.map(dataset=> [dataset[NameX], dataset.OBS_VALUE, dataset[NameLabel]]);
       let FinalArray = [];
-      for(let Obs in OBS_VALUE){
-        let templateDataset = {};
+
+      for(let LabelInst of uniqueVarLabel){
+        let Instance_OBS = OBS_VALUE.filter(data => {return LabelInst == data[2]}) //data[2] is newDataset[NameLabel]
+        console.log(Instance_OBS);
         let RandomColor = await this.RandomColor(0,255);
-        for(let Var_X in uniqueVarX){
-          if(templateDataset['label'] == undefined){templateDataset['label'] = OBS_VALUE[Obs][2]}
+        let templateDataset = {};
+        for(let ValX of uniqueVarX){
+          if(templateDataset['label'] == undefined){templateDataset['label'] = Instance_OBS[0][2]} //Defines structure
           if(templateDataset['data'] == undefined){templateDataset['data'] = []}
-          if(templateDataset['backgroundColor'] == undefined){templateDataset['backgroundColor'] = []}
-          if(templateDataset['borderColor'] == undefined){templateDataset['borderColor'] = []}
-          if(templateDataset['borderWidth'] == undefined){templateDataset['borderWidth'] = 0.2}
-          if(OBS_VALUE[Obs][0] == uniqueVarX[Var_X]){
-            templateDataset['data'].push(OBS_VALUE[Obs][1])
-            templateDataset['backgroundColor'].push(`rgba(${RandomColor[0]}, ${RandomColor[1]}, ${RandomColor[2]}, 0.5)`);
-            templateDataset['borderColor'].push(`rgb(${RandomColor[0]}, ${RandomColor[1]}, ${RandomColor[2]})`);
+          if(templateDataset['backgroundColor'] == undefined){templateDataset['backgroundColor'] = `rgba(${RandomColor[0]}, ${RandomColor[1]}, ${RandomColor[2]}, 0.5)`}
+          if(templateDataset['borderColor'] == undefined){templateDataset['borderColor'] = `rgb(${RandomColor[0]}, ${RandomColor[1]}, ${RandomColor[2]})`}
+          if(templateDataset['pointBackgroundColor'] == undefined){templateDataset['pointBackgroundColor'] = `rgb(${RandomColor[0]}, ${RandomColor[1]}, ${RandomColor[2]})`}
+          let MatchedValue = Instance_OBS.filter(data => {return ValX == data[0]})
+          if(MatchedValue.length > 0){
+            templateDataset['data'].push(MatchedValue[0][1]);
           }else{
             templateDataset['data'].push([]);
-            templateDataset['backgroundColor'].push(`rgba(${RandomColor[0]}, ${RandomColor[1]}, ${RandomColor[2]}, 0.5)`);
-            templateDataset['borderColor'].push(`rgb(${RandomColor[0]}, ${RandomColor[1]}, ${RandomColor[2]})`);
           }
         }
         FinalArray.push(templateDataset);
@@ -189,7 +193,7 @@ export class MyBarChartComponent implements OnInit, OnDestroy{
   ngOnInit() {
     this.SelectFormGroup = new FormGroup({})
     this.SelectFormGroup.addControl("Axis X", new FormControl({}))
-    this.SelectFormGroup.addControl("Axis Y", new FormControl({}))
+    this.SelectFormGroup.addControl("Label", new FormControl({}))
   }
 
   ngOnDestroy(){
