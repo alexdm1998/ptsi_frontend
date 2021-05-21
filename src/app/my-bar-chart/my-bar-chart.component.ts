@@ -106,12 +106,12 @@ export class MyBarChartComponent implements OnInit, OnDestroy{
       let NameLabel = this.SelectFormGroup.controls['Label'].value; //Label
       let VarX = newDataset.map(inst => inst[NameX]);
       let VarLabel = newDataset.map(data => data[NameLabel]);     
-      
+      console.log(newDataset);
       let uniqueVarX = VarX.filter((c, index) => {return VarX.indexOf(c) === index;});
       let uniqueVarLabel = VarLabel.filter((c,index) => {return VarLabel.indexOf(c) === index});
       uniqueVarX.sort();
 
-      let OBS_VALUE = newDataset.map(dataset=> [dataset[NameX], dataset.OBS_VALUE, dataset[NameLabel]]);
+      let OBS_VALUE = newDataset.map(dataset=> [dataset[NameX], dataset["OBS_VALUE"], dataset[NameLabel]]);
       let FinalArray = [];
 
       for(let LabelInst of uniqueVarLabel){
@@ -131,7 +131,7 @@ export class MyBarChartComponent implements OnInit, OnDestroy{
         }
         FinalArray.push(templateDataset);
       }
-
+      console.log(FinalArray);
       
       if(this.chart !== undefined){
         this.chart.destroy();

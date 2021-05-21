@@ -130,7 +130,7 @@ export class MyRadarChartComponent implements OnInit {
           if(templateDataset['label'] == undefined){templateDataset['label'] = Instance_OBS[0][2]} //Defines structure
           if(templateDataset['data'] == undefined){templateDataset['data'] = []}
           if(templateDataset['backgroundColor'] == undefined){templateDataset['backgroundColor'] = `rgba(${RandomColor[0]}, ${RandomColor[1]}, ${RandomColor[2]}, 0.5)`}
-          if(templateDataset['borderColor'] == undefined){templateDataset['borderColor'] = `rgb(${RandomColor[0]}, ${RandomColor[1]}, ${RandomColor[2]})`}
+          if(templateDataset['borderColor'] == undefined){templateDataset['borderColor'] = `rgba(${RandomColor[0]}, ${RandomColor[1]}, ${RandomColor[2]}, 0.5)`}
           if(templateDataset['pointBackgroundColor'] == undefined){templateDataset['pointBackgroundColor'] = `rgb(${RandomColor[0]}, ${RandomColor[1]}, ${RandomColor[2]})`}
           let MatchedValue = Instance_OBS.filter(data => {return ValX == data[0]})
           if(MatchedValue.length > 0){
