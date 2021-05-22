@@ -158,8 +158,7 @@ export class MyPieChartComponent implements OnInit {
                 position: 'top',
               },
               title: {
-                display: true,
-                text: 'Chart.js Doughnut Chart'
+                display: true
               },
               animation: {
                 animateScale: true,
